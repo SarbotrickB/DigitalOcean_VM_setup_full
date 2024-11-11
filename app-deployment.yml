@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: developer-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: developer-app
+  template:
+    metadata:
+      labels:
+        app: developer-app
+    spec:
+      containers:
+      - name: developer-app
+        image: localhost:5000/developer-app:latest
+        ports:
+        - containerPort: 80
