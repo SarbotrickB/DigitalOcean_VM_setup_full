@@ -21,11 +21,11 @@ ansible-playbook -i inventory.ini playbook.yml
 ## Deploy Code into the Registry
 ### Build and Tag Image: 
 ```
-docker build -t <your_vm_ip>:5000/<image_name>:<tag> .
+docker build -t <vm_ip>:5000/<image_name>:<tag> .
 ```
 ### Push the Image: 
 ```
-docker push <your_vm_ip>:5000/<image_name>:<tag>
+docker push <vm_ip>:5000/<image_name>:<tag>
 ```
 
 ## Summary:
