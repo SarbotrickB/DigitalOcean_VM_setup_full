@@ -1,0 +1,25 @@
+# Kubernetes YAML manifest for Docker Registry
+apiVersion: v1
+kind: Pod
+metadata:
+  name: registry
+  labels:
+    app: registry
+spec:
+  containers:
+  - name: registry
+    image: registry:2
+    ports:
+    - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-service
+spec:
+  selector:
+    app: registry
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
