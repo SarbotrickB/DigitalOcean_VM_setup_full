@@ -2,8 +2,18 @@
 Setting up a single VM that will act as a simple cluster and host a Docker registry for deploying the developer's code.
 
 ## playbook.yml
-It sets up Docker, Kubernetes, and configures the VM as a Kubernetes master node.
-For a single-node cluster, we need a network plugin like Flannel.
+### Docker and Kubernetes Installation: 
+Installs Docker and Kubernetes on the VM.
+### Kubernetes Cluster Initialization: 
+Sets up a single-node Kubernetes cluster with kubeadm.
+### Flannel Network Plugin: 
+Adds network support using Flannel for pod communication.
+### Docker Registry Deployment: 
+Deploys a Docker registry inside the Kubernetes cluster.
+### Application Build and Push: 
+Builds the developer's application and pushes it to the registry.
+### Application Deployment: 
+Deploys the application using the image stored in the registry.
 
 ## inventory.ini
 Define the VM as the Ansible host.
