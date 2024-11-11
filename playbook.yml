@@ -1,11 +1,11 @@
-- name: Setup Single Node Cluster with Docker Swarm and Registry
+- name: Install Docker and Kubernetes
   hosts: all
   become: yes
   tasks:
     - name: Update apt packages
       apt:
         update_cache: yes
-
+    
     - name: Install Docker
       apt:
         name: docker.io
@@ -17,33 +17,47 @@
         state: started
         enabled: true
 
-    - name: Initialize Docker Swarm (Single Node)
-      shell: docker swarm init
-      register: swarm_init
-      ignore_errors: true
+    - name: Install Kubernetes prerequisites
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apt-transport-https
+        - curl
 
-    - name: Display Swarm Join Command (for reference)
-      debug:
-        msg: "{{ swarm_init.stdout }}"
+    - name: Add Kubernetes signing key
+      shell: "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
 
-    - name: Create Docker Registry Service
-      docker_service:
-        project_name: registry
-        definition:
-          version: '3'
-          services:
-            registry:
-              image: registry:latest
-              ports:
-                - "5000:5000"
-              restart: always
+    - name: Add Kubernetes repository
+      apt_repository:
+        repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+        state: present
 
-    - name: Verify Registry is Running
-      uri:
-        url: http://localhost:5000/v2/
-        return_content: yes
-      register: registry_status
+    - name: Install kubeadm, kubelet and kubectl
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - kubeadm
+        - kubelet
+        - kubectl
 
-    - name: Display Registry Status
-      debug:
-        msg: "Registry Status: {{ registry_status.content }}"
+    - name: Initialize Kubernetes cluster
+      shell: "kubeadm init --pod-network-cidr=10.244.0.0/16"
+      args:
+        creates: /etc/kubernetes/admin.conf
+
+    - name: Set up kubeconfig for the root user
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
+
+- name: Install Flannel Network Plugin
+  hosts: all
+  become: yes
+  tasks:
+    - name: Apply Flannel network plugin
+      shell: "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+
