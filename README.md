@@ -25,7 +25,7 @@ Define the VM as the Ansible host.
 A Kubernetes manifest for the application deployment using the image in the registry.
 
 ## Run the Playbook
-Update the developer_app_path variable in the playbook to point to the directory containing your developer's Dockerfile and application code.
+Update the developer_app_path variable in the playbook to point to the directory containing the developer's Dockerfile and application code.
 Run the playbook:
 ```
 ansible-playbook -i inventory.ini playbook.yml
