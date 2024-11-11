@@ -1,0 +1,50 @@
+# playbook.yml
+- name: Setup Single Node Cluster with Docker Swarm and Registry
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Initialize Docker Swarm (Single Node)
+      shell: docker swarm init
+      register: swarm_init
+      ignore_errors: true
+
+    - name: Display Swarm Join Command (for reference)
+      debug:
+        msg: "{{ swarm_init.stdout }}"
+
+    - name: Create Docker Registry Service
+      docker_service:
+        project_name: registry
+        definition:
+          version: '3'
+          services:
+            registry:
+              image: registry:latest
+              ports:
+                - "5000:5000"
+              restart: always
+
+    - name: Verify Registry is Running
+      uri:
+        url: http://localhost:5000/v2/
+        return_content: yes
+      register: registry_status
+
+    - name: Display Registry Status
+      debug:
+        msg: "Registry Status: {{ registry_status.content }}"
