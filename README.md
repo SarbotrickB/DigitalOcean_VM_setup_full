@@ -2,14 +2,8 @@
 Setting up a single VM that will act as a simple cluster and host a Docker registry for deploying the developer's code.
 
 ## playbook.yml
-###  Docker Installation: 
-Ensures Docker is installed and running.
-### Swarm Initialization: 
-Initializes Docker Swarm on a single VM, effectively setting up a single-node cluster.
-### Registry Setup: 
-Sets up the registry as a Docker service, exposing it on port 5000.
-### Verification: 
-Checks that the registry is accessible on http://localhost:5000.
+It sets up Docker, Kubernetes, and configures the VM as a Kubernetes master node.
+For a single-node cluster, we need a network plugin like Flannel.
 
 ## inventory.ini
 Define the VM as the Ansible host.
